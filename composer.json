@@ -1,0 +1,46 @@
+{
+    "name": "modn/stripe",
+    "description": "A plugin to add stripe checkout and billing portal support to Craft CMS.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "stripe"
+    ],
+    "support": {
+        "docs": "https://github.com/DanielDarrenJones/stripe/blob/master/README.md",
+        "issues": "https://github.com/DanielDarrenJones/stripe/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Jones",
+            "homepage": "https://danieldarrenjones.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0"
+    },
+    "require-dev": {
+      "craftcms/cms": "^3.2.0",
+      "codeception/codeception": "^3.0",
+      "vlucas/phpdotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "modn\\stripe\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Stripe",
+        "handle": "stripe",
+        "developer": "Daniel Jones",
+        "developerUrl": "https://danieldarrenjones.com",
+        "documentationUrl": "https://github.com/DanielDarrenJones/stripe/blob/master/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/DanielDarrenJones/stripe/master/CHANGELOG.md",
+        "class": "modn\\stripe\\Stripe"
+    }
+}

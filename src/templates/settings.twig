@@ -1,0 +1,26 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Stripe plugin for Craft CMS 3.x
+ *
+ * Stripe Settings.twig
+ *
+ * @author    Daniel Jones
+ * @copyright Copyright (c) 2021 Daniel Jones
+ * @link      https://danieldarrenjones.com
+ * @package   Stripe
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("modn\\stripe\\assetbundles\\stripe\\StripeAsset") %}
+
+{{ forms.textField({
+    label: 'Some Field',
+    instructions: 'Enter some setting here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: settings['someAttribute']})
+}}
