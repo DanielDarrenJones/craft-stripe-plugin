@@ -78,10 +78,7 @@ class StripeControllerController extends Controller
         \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
 
         // The price ID passed from the front end.
-        $priceId = Craft::$app->request->getQueryParam('price_id');
-
-        Craft::dd(Craft::$app->request->getBodyParams());
-        // Craft::dd(Craft::$app->request);
+        $priceId = Craft::$app->request->getBodyParam('price_id');
 
         $session = \Stripe\Checkout\Session::create([
             'success_url' => Craft::$app->request->getQueryParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
