@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stripe plugin for Craft CMS 3.x
  *
@@ -66,14 +67,62 @@ class StripeControllerController extends Controller
 
     /**
      * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/stripe/stripe-controller/do-something
+     * e.g.: actions/stripe/stripe-controller/redirect-checkout
      *
      * @return mixed
      */
-    public function actionDoSomething()
+    public function actionRedirectCheckout()
     {
-        $result = 'Welcome to the StripeControllerController actionDoSomething() method';
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        \Stripe\Stripe::setApiKey('sk_test_51IFNMKLV5v81FPSLTCyqbZ3h7beOB0klgt4wY1jIUp7ozYJomh1q6mlNvnL1Xku0pG34pFQCWEfOMuIbw9kVVg5m00EEpzOAoE');
 
-        return $result;
+        // The price ID passed from the front end.
+        //   $priceId = $_POST['priceId'];
+        $priceId = '{{PRICE_ID}}';
+        $name = Craft::$app->request->getQueryParam('price_id');
+
+        $session = \Stripe\Checkout\Session::create([
+            'success_url' => Craft::$app->request->getQueryParam('redirect') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => Craft::$app->request->getQueryParam('cancel_redirect'),
+            'payment_method_types' => ['card'],
+            'mode' => 'subscription',
+            'line_items' => [[
+                'price' => $priceId,
+                // For metered billing, do not pass quantity
+                'quantity' => 1,
+            ]],
+        ]);
+
+        // Redirect to the URL returned on the Checkout Session.
+        // With vanilla PHP, you can redirect with:
+        header("HTTP/1.1 303 See Other");
+        header("Location: " . $session->url);
+    }
+
+    /**
+     * Handle a request going to our plugin's actionDoSomething URL,
+     * e.g.: actions/stripe/stripe-controller/redirect-customer-portal
+     *
+     * @return mixed
+     */
+    public function actionRedirectCustomerPortal()
+    {
+        // Set your secret key. Remember to switch to your live secret key in production.
+        // See your keys here: https://dashboard.stripe.com/apikeys
+        \Stripe\Stripe::setApiKey('sk_test_51IFNMKLV5v81FPSLTCyqbZ3h7beOB0klgt4wY1jIUp7ozYJomh1q6mlNvnL1Xku0pG34pFQCWEfOMuIbw9kVVg5m00EEpzOAoE');
+
+        // This is the URL to which the user will be redirected after they have
+        // finished managing their billing in the portal.
+        $stripe_customer_id = '{{CUSTOMER_ID}}';
+
+        $session = \Stripe\BillingPortal\Session::create([
+            'customer' => $stripe_customer_id,
+            'return_url' => Craft::$app->request->getQueryParam('redirect'),
+        ]);
+
+        // Redirect to the URL for the session
+        header("HTTP/1.1 303 See Other");
+        header("Location: " . $session->url);
     }
 }
