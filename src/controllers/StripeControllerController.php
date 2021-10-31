@@ -81,8 +81,8 @@ class StripeControllerController extends Controller
         $priceId = Craft::$app->request->getQueryParam('price_id');
 
         $session = \Stripe\Checkout\Session::create([
-            'success_url' => Craft::$app->request->getQueryParam('redirect') . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => Craft::$app->request->getQueryParam('cancel_redirect'),
+            'success_url' => Craft::$app->request->getQueryParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => Craft::$app->request->getQueryParam('cancel_redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
             'payment_method_types' => ['card'],
             'mode' => 'subscription',
             'line_items' => [[
@@ -118,7 +118,7 @@ class StripeControllerController extends Controller
 
         $session = \Stripe\BillingPortal\Session::create([
             'customer' => $stripe_customer_id,
-            'return_url' => Craft::$app->request->getQueryParam('redirect'),
+            'return_url' => Craft::$app->request->getQueryParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
         ]);
 
         // Redirect to the URL for the session
