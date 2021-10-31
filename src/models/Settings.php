@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stripe plugin for Craft CMS 3.x
  *
@@ -39,7 +40,7 @@ class Settings extends Model
      *
      * @var string
      */
-    public $someAttribute = 'Some Default';
+    public $stripeApiKey = '';
 
     // Public Methods
     // =========================================================================
@@ -57,8 +58,8 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['someAttribute', 'string'],
-            ['someAttribute', 'default', 'value' => 'Some Default'],
+            ['stripeApiKey', 'string'],
+            ['stripeApiKey', 'default', 'value' => ''],
         ];
     }
 }
