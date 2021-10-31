@@ -40,7 +40,14 @@ class Settings extends Model
      *
      * @var string
      */
-    public $stripeApiKey = '';
+    public $stripePublishableApiKey = '';
+
+    /**
+     * Some field model attribute
+     *
+     * @var string
+     */
+    public $stripeSectetApiKey = '';
 
     // Public Methods
     // =========================================================================
@@ -58,8 +65,10 @@ class Settings extends Model
     public function rules()
     {
         return [
-            ['stripeApiKey', 'string'],
-            ['stripeApiKey', 'default', 'value' => ''],
+            ['stripePublishableApiKey', 'string'],
+            ['stripePublishableApiKey', 'default', 'value' => ''],
+            ['stripeSecretApiKey', 'string'],
+            ['stripeSecretApiKey', 'default', 'value' => ''],
         ];
     }
 }

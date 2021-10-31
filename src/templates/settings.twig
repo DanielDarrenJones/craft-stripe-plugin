@@ -18,9 +18,17 @@
 {% do view.registerAssetBundle("modn\\stripe\\assetbundles\\stripe\\StripeAsset") %}
 
 {{ forms.textField({
-    label: 'Stripe API Key',
-    instructions: 'Enter your API key provided by stripe.',
-    id: 'stripeApiKey',
-    name: 'stripeApiKey',
-    value: settings['stripeApiKey']})
+    label: 'Stripe Publishable API Key',
+    instructions: 'Enter your publishable API key provided by stripe.',
+    id: 'stripePublishableApiKey',
+    name: 'stripePublishableApiKey',
+    value: settings['stripePublishableApiKey']})
+}}
+
+{{ forms.textField({
+    label: 'Stripe Secret API Key',
+    instructions: 'Enter your secret API key provided by stripe.',
+    id: 'stripeSecretApiKey',
+    name: 'stripeSecretApiKey',
+    value: settings['stripeSecretApiKey']})
 }}

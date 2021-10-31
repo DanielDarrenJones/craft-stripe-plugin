@@ -78,9 +78,7 @@ class StripeControllerController extends Controller
         \Stripe\Stripe::setApiKey($this->getSettings()->stripeApiKey);
 
         // The price ID passed from the front end.
-        //   $priceId = $_POST['priceId'];
-        $priceId = '{{PRICE_ID}}';
-        $name = Craft::$app->request->getQueryParam('price_id');
+        $priceId = Craft::$app->request->getQueryParam('price_id');
 
         $session = \Stripe\Checkout\Session::create([
             'success_url' => Craft::$app->request->getQueryParam('redirect') . '?session_id={CHECKOUT_SESSION_ID}',
@@ -93,6 +91,8 @@ class StripeControllerController extends Controller
                 'quantity' => 1,
             ]],
         ]);
+
+        Craft::dd($session);
 
         // Redirect to the URL returned on the Checkout Session.
         // With vanilla PHP, you can redirect with:
