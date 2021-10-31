@@ -47,7 +47,7 @@ class Settings extends Model
      *
      * @var string
      */
-    public $stripeSectetApiKey = '';
+    public $stripeSecretApiKey = '';
 
     // Public Methods
     // =========================================================================
