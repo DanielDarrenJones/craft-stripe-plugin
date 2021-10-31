@@ -80,7 +80,8 @@ class StripeControllerController extends Controller
         // The price ID passed from the front end.
         $priceId = Craft::$app->request->getQueryParam('price_id');
 
-        Craft::dd(Craft::$app->request);
+        Craft::dd(Craft::$app->request->getQueryParam('price_id'));
+        // Craft::dd(Craft::$app->request);
 
         $session = \Stripe\Checkout\Session::create([
             'success_url' => Craft::$app->request->getQueryParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
