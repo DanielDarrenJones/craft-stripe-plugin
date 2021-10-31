@@ -66,7 +66,7 @@ class StripeControllerController extends Controller
     }
 
     /**
-     * Handle a request going to our plugin's actionDoSomething URL,
+     * Handle a request going to our plugin's redirect-checkout URL,
      * e.g.: actions/stripe/stripe-controller/redirect-checkout
      *
      * @return mixed
@@ -75,7 +75,7 @@ class StripeControllerController extends Controller
     {
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey($this->getSettings()->stripeApiKey);
+        \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
 
         // The price ID passed from the front end.
         $priceId = Craft::$app->request->getQueryParam('price_id');
@@ -101,7 +101,7 @@ class StripeControllerController extends Controller
     }
 
     /**
-     * Handle a request going to our plugin's actionDoSomething URL,
+     * Handle a request going to our plugin's redirect-customer-portal URL,
      * e.g.: actions/stripe/stripe-controller/redirect-customer-portal
      *
      * @return mixed
@@ -110,7 +110,7 @@ class StripeControllerController extends Controller
     {
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey($this->getSettings()->stripeApiKey);
+        \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
 
         // This is the URL to which the user will be redirected after they have
         // finished managing their billing in the portal.
