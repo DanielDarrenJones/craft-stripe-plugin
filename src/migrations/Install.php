@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stripe plugin for Craft CMS 3.x
  *
@@ -97,18 +98,18 @@ class Install extends Migration
     {
         $tablesCreated = false;
 
-    // stripe_customer table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%stripe_customer}}');
+        // stripe_customer table
+        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%stripe_checkout_customer}}');
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%stripe_customer}}',
+                '{{%stripe_checkout_customer}}',
                 [
                     'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
-                // Custom columns in the table
+                    // Custom columns in the table
                     'siteId' => $this->integer()->notNull(),
                     'some_field' => $this->string(255)->notNull()->defaultValue(''),
                 ]
@@ -125,7 +126,7 @@ class Install extends Migration
      */
     protected function createIndexes()
     {
-    // stripe_customer table
+        // stripe_customer table
         $this->createIndex(
             $this->db->getIndexName(
                 '{{%stripe_customer}}',
@@ -152,7 +153,7 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // stripe_customer table
+        // stripe_customer table
         $this->addForeignKey(
             $this->db->getForeignKeyName('{{%stripe_customer}}', 'siteId'),
             '{{%stripe_customer}}',
@@ -180,7 +181,7 @@ class Install extends Migration
      */
     protected function removeTables()
     {
-    // stripe_customer table
+        // stripe_customer table
         $this->dropTableIfExists('{{%stripe_customer}}');
     }
 }

@@ -92,8 +92,6 @@ class StripeControllerController extends Controller
             ]],
         ]);
 
-        Craft::dd($session);
-
         // Redirect to the URL returned on the Checkout Session.
         // With vanilla PHP, you can redirect with:
         header("HTTP/1.1 303 See Other");
