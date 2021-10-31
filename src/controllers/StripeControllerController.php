@@ -75,7 +75,7 @@ class StripeControllerController extends Controller
     {
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey('sk_test_51IFNMKLV5v81FPSLTCyqbZ3h7beOB0klgt4wY1jIUp7ozYJomh1q6mlNvnL1Xku0pG34pFQCWEfOMuIbw9kVVg5m00EEpzOAoE');
+        \Stripe\Stripe::setApiKey($this->getSettings()->stripeApiKey);
 
         // The price ID passed from the front end.
         //   $priceId = $_POST['priceId'];
@@ -110,7 +110,7 @@ class StripeControllerController extends Controller
     {
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey('sk_test_51IFNMKLV5v81FPSLTCyqbZ3h7beOB0klgt4wY1jIUp7ozYJomh1q6mlNvnL1Xku0pG34pFQCWEfOMuIbw9kVVg5m00EEpzOAoE');
+        \Stripe\Stripe::setApiKey($this->getSettings()->stripeApiKey);
 
         // This is the URL to which the user will be redirected after they have
         // finished managing their billing in the portal.
