@@ -123,4 +123,15 @@ class StripeControllerController extends Controller
         header("HTTP/1.1 303 See Other");
         header("Location: " . $session->url);
     }
+
+    private function getCustomerIdForUser($user)
+    {
+    }
+
+    private function createCustomerIdForUser($user)
+    {
+        \Stripe\Customer::create([
+            'email' => '',
+        ]);
+    }
 }

@@ -110,8 +110,8 @@ class Install extends Migration
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
                     // Custom columns in the table
-                    'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
+                    'userId' => $this->integer()->notNull(),
+                    'stripeCustomerId' => $this->string()->notNull(),
                 ]
             );
         }
@@ -129,11 +129,11 @@ class Install extends Migration
         // stripe_customer table
         $this->createIndex(
             $this->db->getIndexName(
-                '{{%stripe_customer}}',
+                '{{%stripe_checkout_customer}}',
                 'some_field',
                 true
             ),
-            '{{%stripe_customer}}',
+            '{{%stripe_checkout_customer}}',
             'some_field',
             true
         );
@@ -155,8 +155,8 @@ class Install extends Migration
     {
         // stripe_customer table
         $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%stripe_customer}}', 'siteId'),
-            '{{%stripe_customer}}',
+            $this->db->getForeignKeyName('{{%stripe_checkout_customer}}', 'siteId'),
+            '{{%stripe_checkout_customer}}',
             'siteId',
             '{{%sites}}',
             'id',
@@ -182,6 +182,6 @@ class Install extends Migration
     protected function removeTables()
     {
         // stripe_customer table
-        $this->dropTableIfExists('{{%stripe_customer}}');
+        $this->dropTableIfExists('{{%stripe_checkout_customer}}');
     }
 }
