@@ -112,7 +112,7 @@ class StripeControllerController extends Controller
 
         // This is the URL to which the user will be redirected after they have
         // finished managing their billing in the portal.
-        $stripe_customer_id = '{{CUSTOMER_ID}}';
+        $stripe_customer_id = 'cus_Ir6HKv9SrQtYey';
 
         $session = \Stripe\BillingPortal\Session::create([
             'customer' => $stripe_customer_id,
