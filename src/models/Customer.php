@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Stripe plugin for Craft CMS 3.x
  *
@@ -14,6 +15,7 @@ use modn\stripe\Stripe;
 
 use Craft;
 use craft\base\Model;
+use craft\elements\User;
 
 /**
  * Customer Model
@@ -33,14 +35,68 @@ class Customer extends Model
     // =========================================================================
 
     /**
-     * Some model attribute
-     *
-     * @var string
+     * @var int|null Customer ID
      */
-    public $someAttribute = 'Some Default';
+    public $id;
+
+    /**
+     * @var int The user ID
+     */
+    public $userId;
+
+    /**
+     * @var string The Stripe Customer ID
+     */
+    public $stripeCustomerId;
+
+    /**
+     * @var User $_user
+     */
+    private $_user;
 
     // Public Methods
     // =========================================================================
+
+    /**
+     * @inheritdoc
+     */
+    public function extraFields()
+    {
+        return [
+            'user',
+        ];
+    }
+
+    /**
+     * Returns the user element associated with this customer.
+     *
+     * @return User|null
+     */
+    public function getUser()
+    {
+        if ($this->_user !== null) {
+            return $this->_user;
+        }
+
+        if (!$this->userId) {
+            return null;
+        }
+
+        $this->_user = Craft::$app->getUsers()->getUserById($this->userId);
+
+        return $this->_user;
+    }
+
+    /**
+     * Sets the user this customer is related to.
+     *
+     * @param User $user
+     */
+    public function setUser(User $user)
+    {
+        $this->_user = $user;
+        $this->userId = $user->id;
+    }
 
     /**
      * Returns the validation rules for attributes.

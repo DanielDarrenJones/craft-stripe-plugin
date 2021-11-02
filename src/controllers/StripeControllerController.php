@@ -15,6 +15,7 @@ use modn\stripe\Stripe;
 
 use Craft;
 use craft\web\Controller;
+use modn\stripe\models\Customer;
 
 /**
  * StripeController Controller
@@ -126,6 +127,7 @@ class StripeControllerController extends Controller
 
     private function getCustomerIdForUser($user)
     {
+        Customer::find()->id($this->userId)->one();
     }
 
     private function createCustomerIdForUser($user)
