@@ -16,6 +16,7 @@ use modn\stripe\Stripe;
 use Craft;
 use craft\web\Controller;
 use craft\commerce\stripe\Plugin as StripePlugin;
+use craft\commerce\Plugin as Commerce;
 
 /**
  * StripeController Controller
@@ -77,13 +78,13 @@ class StripeControllerController extends Controller
         $this->requireLogin();
 
         $user = Craft::$app->getUser()->getIdentity();
-
-        $customers = StripePlugin::getInstance()->getCustomers();
-        $stripeCustomer = $customers->getCustomer(2, $user);
+        $gateway = Commerce::getInstance()->getGateways()->getGatewayById(Stripe::getInstance()->getSettings()->gatewayId);
+        $stripeCustomer = StripePlugin::getInstance()->getCustomers()->getCustomer((int) $gateway->id, $user);
 
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
+
+        \Stripe\Stripe::setApiKey($gateway->apiKey);
 
         // The price ID passed from the front end.
         $priceId = Craft::$app->request->getBodyParam('price_id');
@@ -118,13 +119,12 @@ class StripeControllerController extends Controller
         $this->requireLogin();
 
         $user = Craft::$app->getUser()->getIdentity();
-
-        $customers = StripePlugin::getInstance()->getCustomers();
-        $stripeCustomer = $customers->getCustomer(2, $user);
+        $gateway = Commerce::getInstance()->getGateways()->getGatewayById(Stripe::getInstance()->getSettings()->gatewayId);
+        $stripeCustomer = StripePlugin::getInstance()->getCustomers()->getCustomer((int) $gateway->id, $user);
 
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
-        \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
+        \Stripe\Stripe::setApiKey($gateway->apiKey);
 
         $session = \Stripe\BillingPortal\Session::create([
             'customer' => $stripeCustomer->reference,
