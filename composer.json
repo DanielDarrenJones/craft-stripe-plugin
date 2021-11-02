@@ -24,7 +24,7 @@
     "require": {
         "craftcms/cms": "^3.0.0",
         "stripe/stripe-php": "^7.100",
-        "craftcms/commerce-stripe": "^2.4"
+        "craftcms/commerce-stripe": "^2.0"
     },
     "require-dev": {
       "craftcms/cms": "^3.2.0",
