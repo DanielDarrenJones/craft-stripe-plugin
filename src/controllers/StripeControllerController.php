@@ -48,7 +48,7 @@ class StripeControllerController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'do-something'];
+    protected $allowAnonymous = ['index', 'redirect-checkout', 'redirect-customer-portal'];
 
     // Public Methods
     // =========================================================================
