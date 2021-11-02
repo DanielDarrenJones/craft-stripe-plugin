@@ -15,7 +15,7 @@ use modn\stripe\Stripe;
 
 use Craft;
 use craft\web\Controller;
-use modn\stripe\models\Customer;
+use craft\commerce\stripe\Plugin as StripePlugin;
 
 /**
  * StripeController Controller
@@ -74,6 +74,13 @@ class StripeControllerController extends Controller
      */
     public function actionRedirectCheckout()
     {
+        $this->requireLogin();
+
+        $user = Craft::$app->getUser()->getIdentity();
+
+        $customers = StripePlugin::getInstance()->getCustomers();
+        $stripeCustomer = $customers->getCustomer(2, $user);
+
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
         \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
@@ -91,6 +98,7 @@ class StripeControllerController extends Controller
                 // For metered billing, do not pass quantity
                 'quantity' => 1,
             ]],
+            'customer' => $stripeCustomer->reference,
         ]);
 
         // Redirect to the URL returned on the Checkout Session.
@@ -107,33 +115,24 @@ class StripeControllerController extends Controller
      */
     public function actionRedirectCustomerPortal()
     {
+        $this->requireLogin();
+
+        $user = Craft::$app->getUser()->getIdentity();
+
+        $customers = StripePlugin::getInstance()->getCustomers();
+        $stripeCustomer = $customers->getCustomer(2, $user);
+
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
         \Stripe\Stripe::setApiKey(Stripe::getInstance()->getSettings()->stripeSecretApiKey);
 
-        // This is the URL to which the user will be redirected after they have
-        // finished managing their billing in the portal.
-        $stripe_customer_id = 'cus_Ir6HKv9SrQtYey';
-
         $session = \Stripe\BillingPortal\Session::create([
-            'customer' => $stripe_customer_id,
+            'customer' => $stripeCustomer->reference,
             'return_url' => Craft::$app->request->getBodyParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
         ]);
 
         // Redirect to the URL for the session
         header("HTTP/1.1 303 See Other");
         header("Location: " . $session->url);
-    }
-
-    private function getCustomerIdForUser($user)
-    {
-        Customer::find()->id($this->userId)->one();
-    }
-
-    private function createCustomerIdForUser($user)
-    {
-        \Stripe\Customer::create([
-            'email' => '',
-        ]);
     }
 }
