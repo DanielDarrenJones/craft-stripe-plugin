@@ -93,6 +93,9 @@ class StripeControllerController extends Controller
             'success_url' => Craft::$app->request->getBodyParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => Craft::$app->request->getBodyParam('cancel_redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
             'payment_method_types' => ['card'],
+            'shipping_address_collection' => [
+                'allowed_countries' => ['GB', 'IE', 'FR', 'ES', 'PT'],
+            ],
             'mode' => 'subscription',
             'line_items' => [[
                 'price' => $priceId,
