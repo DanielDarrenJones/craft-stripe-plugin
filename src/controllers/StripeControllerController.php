@@ -75,11 +75,8 @@ class StripeControllerController extends Controller
      */
     public function actionRedirectCheckout()
     {
-        $this->requireLogin();
-
         $user = Craft::$app->getUser()->getIdentity();
         $gateway = Commerce::getInstance()->getGateways()->getGatewayById(Stripe::getInstance()->getSettings()->gatewayId);
-        $stripeCustomer = StripePlugin::getInstance()->getCustomers()->getCustomer((int) $gateway->id, $user);
 
         // Set your secret key. Remember to switch to your live secret key in production.
         // See your keys here: https://dashboard.stripe.com/apikeys
@@ -89,7 +86,7 @@ class StripeControllerController extends Controller
         // The price ID passed from the front end.
         $priceId = Craft::$app->request->getBodyParam('price_id');
 
-        $session = \Stripe\Checkout\Session::create([
+        $sessionData = [
             'success_url' => Craft::$app->request->getBodyParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => Craft::$app->request->getBodyParam('cancel_redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
             'payment_method_types' => ['card'],
@@ -102,8 +99,14 @@ class StripeControllerController extends Controller
                 // For metered billing, do not pass quantity
                 'quantity' => 1,
             ]],
-            'customer' => $stripeCustomer->reference,
-        ]);
+        ];
+
+        if ($user) {
+            $stripeCustomer = StripePlugin::getInstance()->getCustomers()->getCustomer((int) $gateway->id, $user);
+            $data['customer'] = $stripeCustomer->reference;
+        }
+
+        $session = \Stripe\Checkout\Session::create([]);
 
         // Redirect to the URL returned on the Checkout Session.
         // With vanilla PHP, you can redirect with:
