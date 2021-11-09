@@ -106,7 +106,7 @@ class StripeControllerController extends Controller
             $data['customer'] = $stripeCustomer->reference;
         }
 
-        $session = \Stripe\Checkout\Session::create([]);
+        $session = \Stripe\Checkout\Session::create($sessionData);
 
         // Redirect to the URL returned on the Checkout Session.
         // With vanilla PHP, you can redirect with:
