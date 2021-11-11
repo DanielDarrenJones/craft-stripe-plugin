@@ -104,7 +104,7 @@ class StripeControllerController extends Controller
                 [
                     'price_data' => [
                         'currency' => 'gbp',
-                        'unit_amount' => 2000,
+                        'unit_amount' => 1200,
                         'recurring' => [
                             'interval' => 'year'
                         ],
