@@ -115,6 +115,9 @@ class StripeControllerController extends Controller
                     'quantity' => 1,
                 ],
             ],
+            'phone_number_collection' => [
+                'enabled' => true,
+            ],
         ];
 
         if ($user) {
