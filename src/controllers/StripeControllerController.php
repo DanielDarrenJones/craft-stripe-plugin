@@ -99,6 +99,10 @@ class StripeControllerController extends Controller
                 [
                     'price' => $priceId,
                     // For metered billing, do not pass quantity
+                    'adjustable_quantity' => [
+                        'enabled' => true,
+                        'minimum' => 1,
+                    ],
                     'quantity' => 1,
                 ],
                 [
