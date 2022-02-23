@@ -11,15 +11,16 @@
 
 namespace modn\stripe;
 
-use modn\stripe\models\Settings;
-
 use Craft;
-use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
-use craft\web\UrlManager;
-use craft\events\RegisterUrlRulesEvent;
 
+use craft\base\Plugin;
+use craft\events\PluginEvent;
+use craft\events\RegisterUrlRulesEvent;
+use craft\services\Plugins;
+use craft\web\UrlManager;
+use modn\stripe\controllers\StripeController;
+
+use modn\stripe\models\Settings;
 use yii\base\Event;
 
 /**
@@ -74,7 +75,11 @@ class Stripe extends Plugin
      *
      * @var bool
      */
-    public $hasCpSection = false;
+    public $hasCpSection = true;
+
+    public $controllerMap = [
+        'stripe' => StripeController::class,
+    ];
 
     // Public Methods
     // =========================================================================
@@ -98,10 +103,19 @@ class Stripe extends Plugin
         // Register our site routes
         Event::on(
             UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['stripe'] = 'stripe/stripe/index';
+                $event->rules['stripe/<id>'] = 'stripe/stripe/show';
+            }
+        );
+
+        Event::on(
+            UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['stripe/redirect-checkout'] = 'stripe/stripe-controller/redirect-checkout';
-                $event->rules['stripe/redirect-customer-portal'] = 'stripe/stripe-controller/redirect-customer-portal';
+                $event->rules['stripe/redirect-checkout'] = 'stripe/stripe/redirect-checkout';
+                $event->rules['stripe/redirect-customer-portal'] = 'stripe/stripe/redirect-customer-portal';
             }
         );
 

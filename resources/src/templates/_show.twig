@@ -1,0 +1,176 @@
+{% extends '_layouts/cp' %}
+{% set title = 'Stripe Subscriptions'|t('stripe') %}
+
+{% block content %}
+    {# {% dd subscription %} #}
+    <a href="https://dashboard.stripe.com/subscriptions/{{ subscription.id }}">
+        View on stripe
+    </a>
+    <h2>
+        Shipping Address
+    </h2>
+    <p>
+        {% if
+            subscription.customer.name or subscription.customer.shipping.name %}
+            {{
+                subscription.customer.shipping.name|default(
+                    subscription.customer.name
+                )
+            }}
+            <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.line1 %}
+            {{ subscription.customer.shipping.address.line1 }} <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.line2 %}
+            {{ subscription.customer.shipping.address.line2 }} <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.city %}
+            {{ subscription.customer.shipping.address.city }} <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.state %}
+            {{ subscription.customer.shipping.address.state }} <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.postal_code %}
+            {{ subscription.customer.shipping.address.postal_code }} <br />
+        {% endif %}
+
+        {% if subscription.customer.shipping.address.country %}
+            {{ subscription.customer.shipping.address.country }} <br />
+        {% endif %}
+    </p>
+    <p>
+        Email: {{ subscription.customer.email|default('Not provided') }}
+    </p>
+    <p>
+        Phone: {{ subscription.customer.phone|default(subscription.customer.shipping.phone)|default('-') }}
+    </p>
+
+    <hr />
+
+    <h2>
+        Details
+    </h2>
+    <ul>
+        <li>
+            Status:
+            {{ subscription.status }}
+        </li>
+        <li>Start Date: {{ subscription.start_date|date('d/m/Y') }}</li>
+        <li>
+            End Date: {{ subscription.end_date ? subscription.end_date|date('d/m/Y') : '-' }}
+        </li>
+        <li>
+            Current Billing Period: {{ subscription.current_period_start
+                ? subscription.current_period_start|date('d/m/Y')
+                : '-' }} - {{ subscription.current_period_end ? subscription.current_period_end|date('d/m/Y') : '-' }}
+        </li>
+        <li>
+            Currency:
+            {{ subscription.latest_invoice.currency }}
+        </li>
+    </ul>
+
+    <hr />
+
+    <h2>
+        Line Items
+    </h2>
+
+    <table id="menu-list" class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">
+                {{ 'SKU'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Name'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Quantity'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Unit Price'|t('stripe') }}
+            </th>
+        </thead>
+        <tbody>
+            {% if
+                subscription is not empty and subscription.items is not empty %}
+                {% for lineItem in subscription.items.data %}
+                    <tr>
+                        <td>
+                            {{
+                                lineItem.price.product.metadata.sku|default(
+                                    lineItem.price.product.metadata.SKU
+                                )
+                            }}
+                        </td>
+                        <td>
+                            {{ lineItem.price.product.name|default('-') }}
+                        </td>
+                        <td>
+                            {{ lineItem.quantity }}
+                        </td>
+                        <td>
+                            {{
+                                (lineItem.price.unit_amount / 100)|currency(
+                                    lineItem.plan.currency
+                                )
+                            }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>
+                        No subscriptions have been created yet.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <br />
+
+    <ul>
+        <li>
+            <strong>Subtotal:</strong>
+            {{
+                (subscription.latest_invoice.subtotal / 100)|currency(
+                    subscription.latest_invoice.currency
+                )
+            }}
+        </li>
+        <li>
+            <strong>
+                Discount{% if subscription.latest_invoice.discount.coupon.id %}
+                    ({{ subscription.latest_invoice.discount.coupon.id }})
+                {% endif %}:
+            </strong>
+            {{
+                (subscription.latest_invoice.total_discount_amount
+                    / 100)|currency(subscription.latest_invoice.currency)
+            }}
+        </li>
+        <li>
+            <strong>Tax:</strong>
+            {{
+                (subscription.latest_invoice.total_tax_amount / 100)|currency(
+                    subscription.latest_invoice.currency
+                )
+            }}
+        </li>
+        <li style="text-decoration: underline;">
+            <strong>Total:</strong>
+            {{
+                (subscription.latest_invoice.total / 100)|currency(
+                    subscription.latest_invoice.currency
+                )
+            }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends '_layouts/cp' %}
+{% set title = 'Stripe Subscriptions'|t('stripe') %}
+
+{% set startingAfter =
+    craft.app.request.getParam('starting_after')|default(null)
+%}
+{% set endingBefore =
+    craft.app.request.getParam('ending_before')|default(null)
+%}
+
+{% block content %}
+    {# {% dd subscriptions %} #}
+    <form action="#">
+        <div class="flex-grow texticon search icon">
+            <input type="text"
+                id="subscription-id"
+                class="text fullwidth"
+                autocomplete="off"
+                placeholder="Subscription ID"
+                dir="ltr"
+                aria-label="Search"
+                name="id" />
+        </div>
+    </form>
+    <br />
+    <table id="menu-list" class="data fullwidth collapsible">
+        <thead>
+            <th scope="col">
+                {{ 'ID'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Name'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Email'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Phone'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'Start Date'|t('stripe') }}
+            </th>
+            <th scope="col">
+                {{ 'End Date'|t('stripe') }}
+            </th>
+        </thead>
+        <tbody>
+            {% if
+                subscriptions is not empty
+                    and subscriptions.data is not empty %}
+                {% for subscription in subscriptions.data %}
+                    <tr>
+                        <td>
+                            {% switch subscription.status %}
+                            {% case 'active' %}
+                                <span class="status green"
+                                    title="{{ subscription.status }}">
+
+                                </span>
+                            {% case 'canceled' %}
+                                <span class="status red"
+                                    title="{{ subscription.status }}">
+
+                                </span>
+                            {% default %}
+                                <span class="status orange"
+                                    title="{{ subscription.status }}">
+
+                                </span>
+                            {% endswitch %}
+                            <span class="label">
+                                <a href="/admin/stripe/{{ subscription.id }}">
+                                    {{ subscription.id }}
+                                </a>
+                            </span>
+                        </td>
+                        <td>
+                            {{
+                                subscription.customer.shipping.name|default(
+                                    subscription.customer.name
+                                )
+                            }}
+                        </td>
+                        <td>
+                            {{ subscription.customer.email|default('Not provided') }}
+                        </td>
+                        <td>
+                            {{ subscription.customer.phone|default(subscription.customer.shipping.phone)|default('-') }}
+                        </td>
+                        <td>
+                            {{ subscription.start_date
+                                ? subscription.start_date|date('d/m/Y')
+                                : '-' }}
+                        </td>
+                        <td>
+                            {{ subscription.end_date
+                                ? subscription.end_date|date('d/m/Y')
+                                : '-' }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>
+                        No subscriptions have been created yet.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    <div class="flex pagination">
+        {% if startingAfter or (endingBefore and subscriptions.has_more) %}
+            <a href="/admin/stripe?ending_before={{
+                subscriptions.data|first.id
+                }}"
+                class="page-link prev-page"
+                title="Previous Page">
+
+            </a>
+        {% else %}
+            <div class="page-link prev-page disabled"
+                title="Previous Page"></div>
+        {% endif %}
+
+        {% if
+            endingBefore
+                or (endingBefore is null and subscriptions.has_more)
+                or (startingAfter and subscriptions.has_more) %}
+            <a href="/admin/stripe?starting_after={{
+                subscriptions.data|last.id
+                }}"
+                class="page-link next-page"
+                title="Next Page">
+
+            </a>
+        {% else %}
+            <div class="page-link next-page disabled" title="Next Page"></div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -11,15 +11,16 @@
 
 namespace modn\stripe\controllers;
 
-use modn\stripe\Stripe;
-
 use Craft;
-use craft\web\Controller;
-use craft\commerce\stripe\Plugin as StripePlugin;
+
 use craft\commerce\Plugin as Commerce;
+use craft\commerce\stripe\Plugin as StripePlugin;
+use craft\web\Controller;
+use modn\stripe\Stripe;
+use yii\web\NotFoundHttpException;
 
 /**
- * StripeController Controller
+ * Stripe Controller
  *
  * Generally speaking, controllers are the middlemen between the front end of
  * the CP/website and your plugin’s services. They contain action methods which
@@ -38,7 +39,7 @@ use craft\commerce\Plugin as Commerce;
  * @package   Stripe
  * @since     1.0.0
  */
-class StripeControllerController extends Controller
+class StripeController extends Controller
 {
 
     // Protected Properties
@@ -49,7 +50,7 @@ class StripeControllerController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'redirect-checkout', 'redirect-customer-portal'];
+    protected $allowAnonymous = true;
 
     // Public Methods
     // =========================================================================
@@ -62,9 +63,71 @@ class StripeControllerController extends Controller
      */
     public function actionIndex()
     {
-        $result = 'Welcome to the StripeControllerController actionIndex() method';
+        $this->requireCpRequest();
 
-        return $result;
+        if ($subscriptionId = Craft::$app->request->getQueryParam('id')) {
+            return Craft::$app->getResponse()->redirect('/admin/stripe/' . $subscriptionId)->send();
+        }
+
+        $gateway = Commerce::getInstance()->getGateways()->getGatewayById(Stripe::getInstance()->getSettings()->gatewayId);
+        \Stripe\Stripe::setApiKey($gateway->apiKey);
+
+        $data['subscriptions'] = \Stripe\Subscription::all([
+            'status' => 'all',
+            'expand' => ['data.customer'],
+            'starting_after' => Craft::$app->request->getQueryParam('starting_after'),
+            'ending_before' => Craft::$app->request->getQueryParam('ending_before'),
+        ])->toArray();
+
+        // $data['subscriptions']['data'] = null;
+
+        return $this->renderTemplate('stripe/_index', $data);
+    }
+
+    /**
+     * Handle a request going to our plugin's index action URL,
+     * e.g.: actions/stripe/stripe-controller
+     *
+     * @return mixed
+     */
+    public function actionShow(string $id)
+    {
+        $this->requireCpRequest();
+
+        $gateway = Commerce::getInstance()->getGateways()->getGatewayById(Stripe::getInstance()->getSettings()->gatewayId);
+        \Stripe\Stripe::setApiKey($gateway->apiKey);
+
+
+        $data['subscription'] = \Stripe\Subscription::retrieve([
+            'id' => $id,
+        ])->toArray();
+
+        $data['subscription']['customer'] = \Stripe\Customer::retrieve(
+            $data['subscription']['customer']
+        )->toArray();
+
+        $data['subscription']['latest_invoice'] = \Stripe\Invoice::retrieve(
+            $data['subscription']['latest_invoice']
+        )->toArray();
+
+        $data['subscription']['latest_invoice']['total_discount_amount'] = array_sum(array_column($data['subscription']['latest_invoice']['total_discount_amounts'], 'amount'));
+        $data['subscription']['latest_invoice']['total_tax_amount'] = array_sum(array_column($data['subscription']['latest_invoice']['total_tax_amounts'], 'amount'));
+
+        $data['subscription']['items']['data'] = array_map(function ($item) {
+            $item['plan'] = \Stripe\Plan::retrieve([
+                'id' => $item['plan']['id'],
+                'expand' => ['product'],
+            ])->toArray();
+
+            $item['price'] = \Stripe\Price::retrieve([
+                'id' => $item['price']['id'],
+                'expand' => ['product'],
+            ])->toArray();
+
+            return $item;
+        }, $data['subscription']['items']['data']);
+
+        return $this->renderTemplate('stripe/_show', $data);
     }
 
     /**
