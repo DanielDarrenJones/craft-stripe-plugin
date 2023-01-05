@@ -158,6 +158,7 @@ class StripeController extends Controller
                 'allowed_countries' => ['GB', 'IE', 'FR', 'ES', 'PT'],
             ],
             'mode' => 'subscription',
+            'allow_promotion_codes' => true,
             'line_items' => [
                 [
                     'price' => $priceId,
