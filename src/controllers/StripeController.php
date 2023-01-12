@@ -149,6 +149,14 @@ class StripeController extends Controller
         // The price ID passed from the front end.
         $priceId = Craft::$app->request->getBodyParam('price_id');
 
+        try {
+            $price = \Stripe\Price::retrieve($priceId);
+            $currency = $price->currency;
+        } catch (\Throwable $th) {
+            $currency = 'gbp';
+        }
+
+
         $sessionData = [
             'success_url' => Craft::$app->request->getBodyParam('redirect') ?? \craft\helpers\UrlHelper::siteUrl() . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => Craft::$app->request->getBodyParam('cancel_redirect') ?? \craft\helpers\UrlHelper::siteUrl(),
@@ -162,7 +170,6 @@ class StripeController extends Controller
             'line_items' => [
                 [
                     'price' => $priceId,
-                    // For metered billing, do not pass quantity
                     'adjustable_quantity' => [
                         'enabled' => true,
                         'minimum' => 1,
@@ -171,7 +178,7 @@ class StripeController extends Controller
                 ],
                 [
                     'price_data' => [
-                        'currency' => 'gbp',
+                        'currency' => $currency,
                         'unit_amount' => 1200,
                         'recurring' => [
                             'interval' => 'year'

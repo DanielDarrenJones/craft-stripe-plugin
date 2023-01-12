@@ -44,5 +44,11 @@
         "documentationUrl": "https://github.com/DanielDarrenJones/stripe/blob/master/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/DanielDarrenJones/stripe/master/CHANGELOG.md",
         "class": "modn\\stripe\\Stripe"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }
