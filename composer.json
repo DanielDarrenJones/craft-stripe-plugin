@@ -22,18 +22,17 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0",
+        "craftcms/cms": "^4.0.0",
         "stripe/stripe-php": "^7.100",
-        "craftcms/commerce-stripe": "^2.0"
+        "craftcms/commerce-stripe": "^3.0.0",
+        "craftcms/commerce": "^4.0.0"
     },
     "require-dev": {
-      "craftcms/cms": "^3.2.0",
-      "craftcms/commerce": "^3.4.0",
-      "vlucas/phpdotenv": "^3.0"
+        "craftcms/rector": "dev-main"
     },
     "autoload": {
         "psr-4": {
-          "modn\\stripe\\": "src/"
+            "modn\\stripe\\": "src/"
         }
     },
     "extra": {
@@ -44,5 +43,13 @@
         "documentationUrl": "https://github.com/DanielDarrenJones/stripe/blob/master/README.md",
         "changelogUrl": "https://raw.githubusercontent.com/DanielDarrenJones/stripe/master/CHANGELOG.md",
         "class": "modn\\stripe\\Stripe"
-    }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
